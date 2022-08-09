@@ -1,0 +1,95 @@
+name: "NowSecure - Build & Scan"
+
+# Build and test the security of the app, as well as build an SBOM
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # EXAMPLE: Build and upload an Android application to GH artifacts.
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: "11"
+          distribution: "adopt"
+          cache: "gradle"
+
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: Build application
+        run: ./gradlew assembleDebug --stacktrace --no-daemon
+
+      - name: List artifacts
+        run: find . -name '*.apk'
+
+      - name: Upload application
+        uses: actions/upload-artifact@v2
+        with:
+          name: app
+          path: ./app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 3
+
+  # Scan the Android application with NowSecure.
+  scan:
+    runs-on: ubuntu-latest
+    outputs:
+      report_id: ${{ steps.upload.outputs.report_id }}
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # NOTE: ripgrep is required for line-of-code identification.
+      - name: Install ripgrep
+        run: sudo apt-get install -y ripgrep
+
+      - name: Download application
+        uses: actions/download-artifact@v2
+        with:
+          name: app
+
+      - id: upload
+        name: NowSecure upload app
+        uses: nowsecure/nowsecure-action/upload-app@main
+        with:
+          token: ${{ secrets.NS_TOKEN }}
+          app_file: app-debug.apk
+          group_id: "38a6ce91-7920-493d-958a-b912e1bdb506"
+
+  # Pulls the NowSecure report, converts it to SARIF and uploads it.
+  process:
+    if: ${{ needs.scan.outputs.report_id }}
+    runs-on: ubuntu-latest
+    environment:
+      name: nowsecure-env
+    needs: scan
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: NowSecure download report
+        uses: nowsecure/nowsecure-action/convert-sarif@main
+        timeout-minutes: 60
+        with:
+          report_id: ${{ needs.scan.outputs.report_id }}
+          token: ${{ secrets.NS_TOKEN }}
+          group_id: "38a6ce91-7920-493d-958a-b912e1bdb506"
+          enable_dependencies: true
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: NowSecure.sarif
+
+      - name: Upload SARIF to artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: NowSecure.sarif
+          path: ./NowSecure.sarif
