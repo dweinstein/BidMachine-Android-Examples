@@ -31,6 +31,6 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: apps
-          path: ./*/build/outputs/apk/debug/*.apk
+          path: ./*/build/outputs/apk/*/*.apk
           retention-days: 3
 
