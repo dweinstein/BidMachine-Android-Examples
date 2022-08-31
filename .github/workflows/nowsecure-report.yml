@@ -33,22 +33,11 @@ jobs:
         enable_dependencies: false
         enable_sarif: true
 
-    - name: Upload SARIF file
-      uses: github/codeql-action/upload-sarif@v2
-      with:
-        sarif_file: NowSecure.sarif
-
     - name: Upload SARIF to artifacts
-      uses: github/codeql-action/upload-sarif@v2
+      uses: actions/upload-artifact@v2
       with:
         name: NowSecure.sarif
         path: ./NowSecure.sarif
-
-    - name: Upload nsconfig for audit
-      uses: actions/upload-artifact@v2
-      with:
-        name: nsconfig
-        path: ./nsconfig.yml
 
     # demonstrates getting an existing report and uploading the dependencies to dependency graph
     - name: NowSecure-SBOM
@@ -60,3 +49,9 @@ jobs:
         group_id: "38a6ce91-7920-493d-958a-b912e1bdb506"
         enable_dependencies: true
         enable_sarif: false
+
+    - name: Upload nsconfig for audit
+      uses: actions/upload-artifact@v2
+      with:
+        name: nsconfig
+        path: ./nsconfig.yml
