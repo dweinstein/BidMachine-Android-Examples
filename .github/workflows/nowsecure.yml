@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  android:
     uses: ./.github/workflows/android.yml
 
   # Scan the Android application with NowSecure.
