@@ -66,6 +66,12 @@ jobs:
         with:
           sarif_file: NowSecure.sarif
 
+      - name: Upload nsconfig for audit
+        uses: actions/upload-artifact@v2
+        with:
+          name: nsconfig
+          path: ./nsconfig.yml
+
       - name: Upload SARIF to artifacts
         uses: actions/upload-artifact@v2
         with:

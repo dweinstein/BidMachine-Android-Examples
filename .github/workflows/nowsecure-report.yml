@@ -39,10 +39,16 @@ jobs:
         sarif_file: NowSecure.sarif
 
     - name: Upload SARIF to artifacts
-      uses: actions/upload-artifact@v2
+      uses: github/codeql-action/upload-sarif@v2
       with:
         name: NowSecure.sarif
         path: ./NowSecure.sarif
+
+    - name: Upload nsconfig for audit
+      uses: actions/upload-artifact@v2
+      with:
+        name: nsconfig
+        path: ./nsconfig.yml
 
     # demonstrates getting an existing report and uploading the dependencies to dependency graph
     - name: NowSecure-SBOM
