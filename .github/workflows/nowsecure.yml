@@ -38,7 +38,7 @@ jobs:
         uses: nowsecure/nowsecure-action/upload-app@main
         with:
           token: ${{ secrets.NS_TOKEN }}
-          app_file: bidmachine-interstitial/build/outputs/apk/debug/bidmachine-interstitial-debug.apk
+          app_file: apps/bidmachine-interstitial/build/outputs/apk/debug/bidmachine-interstitial-debug.apk
           group_id: "38a6ce91-7920-493d-958a-b912e1bdb506"
 
   # Pulls the NowSecure report, converts it to SARIF and uploads it.
