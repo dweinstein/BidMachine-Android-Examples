@@ -6,8 +6,6 @@ on:
     inputs:
       report_id:
         description: 'Report ID to retrieve'
-        # Default value if no value is explicitly provided
-        default: '81b36804-176c-11ed-b59b-a32f18ae4fe1'
         # Input has to be provided for the workflow to run
         required: true
 jobs:
