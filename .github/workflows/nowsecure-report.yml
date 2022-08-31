@@ -51,5 +51,5 @@ jobs:
     - name: Upload nsconfig for audit
       uses: actions/upload-artifact@v2
       with:
-        name: nsconfig
+        name: nsconfig.yml
         path: ./nsconfig.yml
