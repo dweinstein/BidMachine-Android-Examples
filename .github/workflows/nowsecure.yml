@@ -24,7 +24,7 @@ jobs:
         run: sudo apt-get install -y ripgrep
 
       - name: Download application
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4.1.7
         with:
           name: apps
           path: ./apps
